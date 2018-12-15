@@ -71,5 +71,8 @@ bagSubbag (x:xs) ys
  |otherwise = False
  where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
 
-
+bagDif :: String -> String -> String
+bagDif xs [] = xs
+bagDif [] ys = ys
+bagDif xs (y:ys) = bagDif (delElFirst y xs) ys
 
