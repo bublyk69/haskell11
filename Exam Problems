@@ -76,3 +76,17 @@ bagDif xs [] = xs
 bagDif [] ys = ys
 bagDif xs (y:ys) = bagDif (delElFirst y xs) ys
 
+unionL :: [Int] -> [Int] -> [Int]
+unionL xs [] = xs
+unionL [] xs = xs
+unionL xs (y:ys) = (head xs): (unionL (delEl y xs) ys)
+
+sumFr :: [Int] -> Int
+sumFr xs = foldr (\ x acc  -> acc + x) 0 xs
+
+
+factorialFoldl :: Int -> Int
+factorialFoldl x
+  | x> 0 = foldl(\ xs acc -> acc*xs) 1 [1..x] 
+  |otherwise = -1
+
