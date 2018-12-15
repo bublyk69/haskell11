@@ -1,0 +1,64 @@
+import Data.List
+
+suffixs :: [a] -> [[a]]
+suffixs [] = [[]]
+suffixs xs = xs:suffixs (tail xs)
+
+
+bagIntersect :: String -> String -> String
+bagIntersect _ [] = []
+bagIntersect [] _ = []
+bagIntersect (x:xs) ys 
+ |contains = x:(bagIntersect xs (delElFirst x ys)) 
+ |otherwise = (bagIntersect xs (delElFirst x ys)) 
+ where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
+
+delElFirst::(Eq a) =>a-> [a] -> [a]
+delElFirst _ [] = []
+delElFirst el (l:list)
+ |el==l = list
+ |otherwise = l:(delElFirst el list)
+
+
+
+numLess :: Int -> [Int]
+numLess x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
+
+
+sortDividers :: [Int] -> [Int]
+sortDividers xs = sort $ map (head) [t | t <- map (dividers) xs]
+
+dividers :: Int -> [Int]
+dividers x = [x, length [t | t <- [1..x], x `mod` t == 0, t /= 1, t /= x]]
+
+
+transposes :: [[a]] -> [[a]]
+transposes [] = []
+transposes ([] : xss) = transpose xss
+transposes ((x:xs):xss) = (x:[t | (t:_) <- xss]) : transpose (xs : [h | (_:h) <- xss])
+
+
+listSum :: [Int] -> [Int] -> [Int]
+listSum [] y = y 
+listSum x [] = x
+listSum x y = [(head x) + (head y)] ++ listSum (tail x) (tail y)
+
+
+oddEven :: [Int] -> [Int] 
+oddEven [x] = [x]
+oddEven [x,y] = [y,x]
+oddEven xs = [(head(tail xs)), (head xs)] ++ oddEven (tail(tail xs))
+
+
+position ::  Int -> [Int] -> Int
+position x [] = -1
+position x xs = if x == (head xs) then  0 else 1 + position x (tail xs)
+
+
+set :: [Int] -> [Int]
+set [] = []
+set (x:xs) = x :( set (delEl x xs))
+
+delEl ::(Eq a) =>a-> [a] -> [a]
+delEl x xs = [t | t <- xs, t /= x]
+
