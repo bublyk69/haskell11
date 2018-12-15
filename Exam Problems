@@ -62,3 +62,14 @@ set (x:xs) = x :( set (delEl x xs))
 delEl ::(Eq a) =>a-> [a] -> [a]
 delEl x xs = [t | t <- xs, t /= x]
 
+
+bagSubbag:: String->String->Bool
+bagSubbag [] _ = True
+bagSubbag _ [] = False
+bagSubbag (x:xs) ys 
+ |contains = True && (bagSubbag xs (delElFirst x ys)) 
+ |otherwise = False
+ where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
+
+
+
