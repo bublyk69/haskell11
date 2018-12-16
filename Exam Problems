@@ -1,10 +1,12 @@
 import Data.List
 
+-- Пошук суфіксів
 suffixs :: [a] -> [[a]]
 suffixs [] = [[]]
 suffixs xs = xs:suffixs (tail xs)
 
 
+-- Пошук спільних букв у списках, к-ть спільних букв - мінімальна кількість в одному з них
 bagIntersect :: String -> String -> String
 bagIntersect _ [] = []
 bagIntersect [] _ = []
@@ -12,7 +14,7 @@ bagIntersect (x:xs) ys
  |contains = x:(bagIntersect xs (delElFirst x ys)) 
  |otherwise = (bagIntersect xs (delElFirst x ys)) 
  where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
-
+-- допоміжна функція для bagIntersect
 delElFirst::(Eq a) =>a-> [a] -> [a]
 delElFirst _ [] = []
 delElFirst el (l:list)
@@ -20,41 +22,46 @@ delElFirst el (l:list)
  |otherwise = l:(delElFirst el list)
 
 
-
+-- Вивести список чисел до Х, які не діляться на 3 і які парні
 numLess :: Int -> [Int]
 numLess x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
 
-
+-- Відсортувати список чисел за к-ть дільників
 sortDividers :: [Int] -> [Int]
 sortDividers xs = sort $ map (head) [t | t <- map (dividers) xs]
 
+-- Допоміжна функція, що виводить список списків [число, к-ть дільників]
 dividers :: Int -> [Int]
 dividers x = [x, length [t | t <- [1..x], x `mod` t == 0, t /= 1, t /= x]]
 
-
+-- Транспонування матриць(рядки міняються на стовпчики)
 transposes :: [[a]] -> [[a]]
 transposes [] = []
 transposes ([] : xss) = transpose xss
 transposes ((x:xs):xss) = (x:[t | (t:_) <- xss]) : transpose (xs : [h | (_:h) <- xss])
 
 
+-- сума списків
 listSum :: [Int] -> [Int] -> [Int]
 listSum [] y = y 
 listSum x [] = x
 listSum x y = [(head x) + (head y)] ++ listSum (tail x) (tail y)
 
 
+-- Міняємо місцями парні та непарні
 oddEven :: [Int] -> [Int] 
 oddEven [x] = [x]
 oddEven [x,y] = [y,x]
 oddEven xs = [(head(tail xs)), (head xs)] ++ oddEven (tail(tail xs))
 
 
-position ::  Int -> [Int] -> Int
-position x [] = -1
-position x xs = if x == (head xs) then  0 else 1 + position x (tail xs)
+-- Вивести індекс першого входження числа
+position:: Int->[Int]->Int
+position el list = snd ( head ( filter (\q->(fst q)==el) qq))
+ where qq=zip list [0..]
 
 
+-- Вивести список чисел, без повторень
 set :: [Int] -> [Int]
 set [] = []
 set (x:xs) = x :( set (delEl x xs))
@@ -63,6 +70,8 @@ delEl ::(Eq a) =>a-> [a] -> [a]
 delEl x xs = [t | t <- xs, t /= x]
 
 
+
+-- Перевірка, чи являється список підсписком першого
 bagSubbag:: String->String->Bool
 bagSubbag [] _ = True
 bagSubbag _ [] = False
@@ -71,22 +80,35 @@ bagSubbag (x:xs) ys
  |otherwise = False
  where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
 
+
+
+-- Різниця множин
 bagDif :: String -> String -> String
 bagDif xs [] = xs
 bagDif [] ys = ys
 bagDif xs (y:ys) = bagDif (delElFirst y xs) ys
 
+
+-- Поєднання списків без дублікатів
 unionL :: [Int] -> [Int] -> [Int]
 unionL xs [] = xs
 unionL [] xs = xs
 unionL xs (y:ys) = (head xs): (unionL (delEl y xs) ys)
 
+
+-- Сума елементів списку через foldr
 sumFr :: [Int] -> Int
 sumFr xs = foldr (\ x acc  -> acc + x) 0 xs
 
 
+-- Факторіал через foldl
 factorialFoldl :: Int -> Int
 factorialFoldl x
   | x> 0 = foldl(\ xs acc -> acc*xs) 1 [1..x] 
   |otherwise = -1
+
+
+
+
+
 
