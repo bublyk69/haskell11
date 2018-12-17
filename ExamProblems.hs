@@ -1,3 +1,7 @@
+--------------------------------------------------------
+-- Tested
+--------------------------------------------------------
+
 {-
 Напишіть функцію suffix, що знаходить суфікси заданого списку.
 Test cases:
@@ -36,17 +40,148 @@ remove _ [] = []
 remove q (w:ws) | q == w = ws
                 | otherwise = w:(remove q ws)
 
--- допоміжна функція для bagIntersect
+{-
+Реалізувати функцію primeNotDiv3LN :: Int -> [Int], яка генерує елементи зі списку цілих
+парних чисел, які не діляться на 3 та меньші за N.
+Test cases:
+primeNotDiv3LN 0 == []
+primeNotDiv3LN 3 == [2]
+primeNotDiv3LN 4 == [2]
+primeNotDiv3LN 17 == [2,4,8,10,14,16]
+
+-}
+primeNotDiv3LN :: Int -> [Int]
+primeNotDiv3LN x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
+
+
+{-
+Список можна розглядати як мультимножину симолів.
+Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
+Напишіть функцію bagDif st1 st2, котра бере мультимножини st1 та st2 і поветрає їх різницю.
+Різниця мультимножин X і Y містить всі елементи, що зустрічаються в X не меньшу кількість раз ніж в Y
+кількість повторень елементу в перетині, це кількість його повторень в X мінус кількість повторень в Y.
+Test cases:
+bagDif "abc" "" == "abc"
+bagDif "" "abc" == ""
+bagDif "aabbcc" "abc" == "abc"
+bagDif "abc" "aabbcc" == ""
+bagDif "abc" "abc" == ""
+
+-}
+
+bagDif :: String -> String -> String
+bagDif x [] = x
+bagDif [] _ = []
+bagDif (x:xs) ys | a >= b = c ++ (bagDif d e) -- x count in X bigger than x count in Y
+                 | otherwise = bagDif d e -- ignore x
+ where a = count x (x:xs) -- count of repeated x in X
+       b = count x ys -- count of repeated x in Y
+       c = generate x (a-b) -- list of a-b x values
+       d = removeAll x xs -- X without x values
+       e = removeAll x ys -- Y without x values
+
+removeAll :: Eq a => a -> [a] -> [a]
+removeAll _ [] = []
+removeAll x (y:ys) = [a | a <- (y:ys), a /= x]
+
+count :: Eq a => a -> [a] -> Int
+count _ [] = 0
+count x (y:ys) | x == y = 1 + (count x ys)
+               | otherwise = count x ys
+
+generate :: a -> Int -> [a]
+generate x n | n > 0 = x:(generate x (n-1))
+             | otherwise = []
+
+{-
+Список можна розглядати як мультимножину симолів.
+Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
+Напишіть функцію bagSubbag st1 st2, котра поветрає True, якщо мультимножина st1 являється підмультимножиною st2.
+X - підмультимножина Y, якщо кожний елемент X зустрічається в Y не меншу кількість раз ніж в X.
+Test cases:
+bagSubbag "" "" == True
+bagSubbag "" "abc" == True
+bagSubbag "abc" "abc" == True
+bagSubbag "abc" "abcd" == True
+bagSubbag "abcc" "abcd" == False
+bagSubbag "abcc" "abccd" == True
+bagSubbag "acc" "abccd" == True
+
+-}
+
+bagSubbag:: String->String->Bool
+bagSubbag [] _ = True
+bagSubbag _ [] = False
+bagSubbag (x:xs) ys 
+ |contains = True && (bagSubbag xs (delElFirst x ys)) 
+ |otherwise = False
+ where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
+
+-- допоміжна функція для bagSubbag
 delElFirst::(Eq a) =>a-> [a] -> [a]
 delElFirst _ [] = []
 delElFirst el (l:list)
  |el==l = list
  |otherwise = l:(delElFirst el list)
 
+{- or
+bagSubbag :: String -> String -> Bool
+bagSubbag [] [] = True
+bagSubbag [] _ = True
+bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
+ where a = count x (x:xs) -- count of repeated x in X
+       b = count x ys -- count of repeated x in Y
+-}
 
--- Вивести список чисел до Х, які не діляться на 3 і які парні
-numLess :: Int -> [Int]
-numLess x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
+
+--------------------------------------------------------
+-- IO
+--------------------------------------------------------
+
+getFileName :: String -> IO String
+getFileName prompt = do
+ putStr prompt
+ getLine
+
+{-
+Перевірити баланс дужок
+Test cases:
+checkBalance "(()())" == True 
+checkBalance "()" == True
+checkBalance "()()()" == True
+checkBalance "((()))" == True
+checkBalance "(2+2)*2-(3-3)" == True
+checkBalance "" == True
+checkBalance "(" == False
+checkBalance "())" == False
+checkBalance ")" == False
+checkBalance ")(" == False
+checkBalance "(asdw((asca)" == False
+checkBalance "(Hello" == False
+
+-}
+balance :: IO()
+balance = do
+ from <- getFileName "From: "
+ s <- readFile from
+ case (checkBalance s) of
+  True -> putStr "Balanced\n"
+  False -> putStr "Unbalanced\n"
+
+checkBalance :: String -> Bool
+checkBalance [] = True
+checkBalance xs = helper xs []
+ where
+ helper "" stack = (length stack) == 0
+ helper (x:xs) stack | x == '(' = helper xs (x:stack) -- push
+                     | x == ')' && (length stack) == 0 = False
+                     | x == ')' = helper xs (tail stack) -- pop
+                     | otherwise = helper xs stack -- ignore
+
+
+--------------------------------------------------------
+-- Not tested
+--------------------------------------------------------
 
 -- Відсортувати список чисел за к-ть дільників
 sortDividers :: [Int] -> [Int]
@@ -91,70 +226,6 @@ set (x:xs) = x :( set (delEl x xs))
 delEl ::(Eq a) =>a-> [a] -> [a]
 delEl x xs = [t | t <- xs, t /= x]
 
-
-
--- Перевірка, чи являється список підсписком першого
-bagSubbag:: String->String->Bool
-bagSubbag [] _ = True
-bagSubbag _ [] = False
-bagSubbag (x:xs) ys 
- |contains = True && (bagSubbag xs (delElFirst x ys)) 
- |otherwise = False
- where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
-
-{-
-or
-
-bagSubbag :: String -> String -> Bool
-bagSubbag [] [] = True
-bagSubbag [] _ = True
-bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
- where a = count x (x:xs) -- count of repeated x in X
-       b = count x ys -- count of repeated x in Y
-
--}
-
-
-{-
-Список можна розглядати як мультимножину симолів.
-Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
-Напишіть функцію bagDif st1 st2, котра бере мультимножини st1 та st2 і поветрає їх різницю.
-Різниця мультимножин X і Y містить всі елементи, що зустрічаються в X не меньшу кількість раз ніж в Y
-кількість повторень елементу в перетині, це кількість його повторень в X мінус кількість повторень в Y.
-Test cases:
-bagDif "abc" "" == "abc"
-bagDif "" "abc" == ""
-bagDif "aabbcc" "abc" == "abc"
-bagDif "abc" "aabbcc" == ""
-bagDif "abc" "abc" == ""
-
--}
-
-bagDif :: String -> String -> String
-bagDif x [] = x
-bagDif [] _ = []
-bagDif (x:xs) ys | a >= b = c ++ (bagDif d e) -- x count in X bigger than x count in Y
-                 | otherwise = bagDif d e -- ignore x
- where a = count x (x:xs) -- count of repeated x in X
-       b = count x ys -- count of repeated x in Y
-       c = generate x (a-b) -- list of a-b x values
-       d = removeAll x xs -- X without x values
-       e = removeAll x ys -- Y without x values
-
-removeAll :: Eq a => a -> [a] -> [a]
-removeAll _ [] = []
-removeAll x (y:ys) = [a | a <- (y:ys), a /= x]
-
-count :: Eq a => a -> [a] -> Int
-count _ [] = 0
-count x (y:ys) | x == y = 1 + (count x ys)
-               | otherwise = count x ys
-
-generate :: a -> Int -> [a]
-generate x n | n > 0 = x:(generate x (n-1))
-             | otherwise = []
-
-
 -- Поєднання списків без дублікатів
 unionL :: [Int] -> [Int] -> [Int]
 unionL xs [] = xs
@@ -171,6 +242,7 @@ sumFr xs = foldr (\ x acc  -> acc + x) 0 xs
 factorialFoldl :: Int -> Int
 factorialFoldl x
   | x> 0 = foldl(\ xs acc -> acc*xs) 1 [1..x] 
+<<<<<<< HEAD
   |otherwise = -1
 
 {-
@@ -191,3 +263,6 @@ primeNotDiv3LN n = [x | x <- [2,2+2..(n-1)], x `mod` 3 /= 0]
 -- Виводить к-ть простих, додатніх чисел
 primeCnt :: [Int] -> Int
 primeCnt xs = length [t | t <- xs, t > 0, last (dividers t) == 0 ]
+=======
+  |otherwise = -1
+>>>>>>> 999b6623f76f4a446684825a6cb619e95c990a51
