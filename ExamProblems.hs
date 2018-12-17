@@ -132,6 +132,30 @@ bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
        b = count x ys -- count of repeated x in Y
 -}
 
+{-
+Порахувати суму факторіалів елементів, 
+якщо є від'ємні числа - повернути Nothing
+Test cases:
+sumFact [] == Nothing
+sumFact [1] == Just 1
+sumFact [3] == Just 6
+sumFact [5] == Just 120
+sumFact [5,1,3] == Just 127
+sumFact [5,1,3,-3] == Nothing
+sumFact [0,-3,-1,-3] == Nothing
+sumFact [0,0,0,0] == Just 4
+
+-}
+
+sumFact :: [Int] -> Maybe Int
+sumFact [] = Nothing
+sumFact xs | (not $ check xs) = Nothing
+           | otherwise = Just $ foldl1 (+) (map factorial xs)
+ where
+ check [] = True
+ check (q:qs) = q >= 0 && check qs
+ factorial a | a <= 0 = 1
+             | otherwise = a * (factorial (a-1))
 
 --------------------------------------------------------
 -- IO
