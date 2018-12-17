@@ -36,17 +36,60 @@ remove _ [] = []
 remove q (w:ws) | q == w = ws
                 | otherwise = w:(remove q ws)
 
--- допоміжна функція для bagIntersect
-delElFirst::(Eq a) =>a-> [a] -> [a]
-delElFirst _ [] = []
-delElFirst el (l:list)
- |el==l = list
- |otherwise = l:(delElFirst el list)
+{-
+Реалізувати функцію primeNotDiv3LN :: Int -> [Int], яка генерує елементи зі списку цілих
+парних чисел, які не діляться на 3 та меньші за N.
+Test cases:
+primeNotDiv3LN 0 == []
+primeNotDiv3LN 3 == [2]
+primeNotDiv3LN 4 == [2]
+primeNotDiv3LN 17 == [2,4,8,10,14,16]
+
+-}
+primeNotDiv3LN :: Int -> [Int]
+primeNotDiv3LN x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
 
 
--- Вивести список чисел до Х, які не діляться на 3 і які парні
-numLess :: Int -> [Int]
-numLess x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
+{-
+Список можна розглядати як мультимножину симолів.
+Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
+Напишіть функцію bagDif st1 st2, котра бере мультимножини st1 та st2 і поветрає їх різницю.
+Різниця мультимножин X і Y містить всі елементи, що зустрічаються в X не меньшу кількість раз ніж в Y
+кількість повторень елементу в перетині, це кількість його повторень в X мінус кількість повторень в Y.
+Test cases:
+bagDif "abc" "" == "abc"
+bagDif "" "abc" == ""
+bagDif "aabbcc" "abc" == "abc"
+bagDif "abc" "aabbcc" == ""
+bagDif "abc" "abc" == ""
+
+-}
+
+bagDif :: String -> String -> String
+bagDif x [] = x
+bagDif [] _ = []
+bagDif (x:xs) ys | a >= b = c ++ (bagDif d e) -- x count in X bigger than x count in Y
+                 | otherwise = bagDif d e -- ignore x
+ where a = count x (x:xs) -- count of repeated x in X
+       b = count x ys -- count of repeated x in Y
+       c = generate x (a-b) -- list of a-b x values
+       d = removeAll x xs -- X without x values
+       e = removeAll x ys -- Y without x values
+
+removeAll :: Eq a => a -> [a] -> [a]
+removeAll _ [] = []
+removeAll x (y:ys) = [a | a <- (y:ys), a /= x]
+
+count :: Eq a => a -> [a] -> Int
+count _ [] = 0
+count x (y:ys) | x == y = 1 + (count x ys)
+               | otherwise = count x ys
+
+generate :: a -> Int -> [a]
+generate x n | n > 0 = x:(generate x (n-1))
+             | otherwise = []
+
+
 
 -- Відсортувати список чисел за к-ть дільників
 sortDividers :: [Int] -> [Int]
@@ -92,6 +135,13 @@ delEl ::(Eq a) =>a-> [a] -> [a]
 delEl x xs = [t | t <- xs, t /= x]
 
 
+-- допоміжна функція для bagIntersect
+delElFirst::(Eq a) =>a-> [a] -> [a]
+delElFirst _ [] = []
+delElFirst el (l:list)
+ |el==l = list
+ |otherwise = l:(delElFirst el list)
+
 
 -- Перевірка, чи являється список підсписком першого
 bagSubbag:: String->String->Bool
@@ -114,47 +164,6 @@ bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
 
 -}
 
-
-{-
-Список можна розглядати як мультимножину симолів.
-Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
-Напишіть функцію bagDif st1 st2, котра бере мультимножини st1 та st2 і поветрає їх різницю.
-Різниця мультимножин X і Y містить всі елементи, що зустрічаються в X не меньшу кількість раз ніж в Y
-кількість повторень елементу в перетині, це кількість його повторень в X мінус кількість повторень в Y.
-Test cases:
-bagDif "abc" "" == "abc"
-bagDif "" "abc" == ""
-bagDif "aabbcc" "abc" == "abc"
-bagDif "abc" "aabbcc" == ""
-bagDif "abc" "abc" == ""
-
--}
-
-bagDif :: String -> String -> String
-bagDif x [] = x
-bagDif [] _ = []
-bagDif (x:xs) ys | a >= b = c ++ (bagDif d e) -- x count in X bigger than x count in Y
-                 | otherwise = bagDif d e -- ignore x
- where a = count x (x:xs) -- count of repeated x in X
-       b = count x ys -- count of repeated x in Y
-       c = generate x (a-b) -- list of a-b x values
-       d = removeAll x xs -- X without x values
-       e = removeAll x ys -- Y without x values
-
-removeAll :: Eq a => a -> [a] -> [a]
-removeAll _ [] = []
-removeAll x (y:ys) = [a | a <- (y:ys), a /= x]
-
-count :: Eq a => a -> [a] -> Int
-count _ [] = 0
-count x (y:ys) | x == y = 1 + (count x ys)
-               | otherwise = count x ys
-
-generate :: a -> Int -> [a]
-generate x n | n > 0 = x:(generate x (n-1))
-             | otherwise = []
-
-
 -- Поєднання списків без дублікатів
 unionL :: [Int] -> [Int] -> [Int]
 unionL xs [] = xs
@@ -172,17 +181,3 @@ factorialFoldl :: Int -> Int
 factorialFoldl x
   | x> 0 = foldl(\ xs acc -> acc*xs) 1 [1..x] 
   |otherwise = -1
-
-{-
-Реалізувати функцію primeNotDiv3LN :: Int -> [Int], яка генерує елементи зі списку цілих
-парних чисел, які не діляться на 3 та меньші за N.
-Test cases:
-primeNotDiv3LN 0 == []
-primeNotDiv3LN 3 == [2]
-primeNotDiv3LN 4 == [2]
-primeNotDiv3LN 17 == [2,4,8,10,14,16]
-
--}
-
-primeNotDiv3LN :: Int -> [Int]
-primeNotDiv3LN n = [x | x <- [2,2+2..(n-1)], x `mod` 3 /= 0]
