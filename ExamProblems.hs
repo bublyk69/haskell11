@@ -270,3 +270,44 @@ factorialFoldl x
 -- Виводить к-ть простих, додатніх чисел
 primeCnt :: [Int] -> Int
 primeCnt xs = length [t | t <- xs, t > 0, last (dividers t) == 0 ]
+
+
+{- NOT FINISHED
+Функція, яка приймає string - число в якісь системі числення, 
+і int - основу цієї системи числення <= 16. Числа більше 10 позначаються від a до f. 
+Повертаємо це число в десятковій системі Just Integer, якщо воно правильно задане у 
+своїй системі числення, і Nothing, якщо неправильно.
+Test cases:
+checkNumber "123" 0 == Nothing
+checkNumber "q" 1 == Nothing
+checkNumber "000" 1 == Nothing
+checkNumber "000" 1 == Nothing
+
+-}
+checkNumber :: String -> Int -> Maybe Integer
+checkNumber [] _ = Nothing
+checkNumber ('-':xs) n = checkNumber xs n
+checkNumber xs n | check xs n = Just (toDecimal xs n)
+                 | otherwise = Nothing
+ where
+ check (q:qs) w = (ch q w) && (check qs w)
+ ch c n | not $ (number c && letter c) = False
+        | n < 1 || n > 16 = False
+        | n == 1 = (num c) == 1
+        | n > 1 && n <= 10 = ((num c) >= 0 && (num c) < 10)
+        | n == 11 = sysMoreThan10ch c 'a'
+        | n == 12 = sysMoreThan10ch c 'b'
+        | n == 13 = sysMoreThan10ch c 'c'
+        | n == 14 = sysMoreThan10ch c 'd'
+        | n == 15 = sysMoreThan10ch c 'e'
+        | n == 16 = sysMoreThan10ch c 'f'
+ letter c = (c >= 'a' && c <= 'f')
+ number c = (c >= '0' && c <= '9')
+ num a | (number a) = read (a:[])::Int
+       | otherwise = -1
+ sysMoreThan10ch c boundary = ((num c) >= 0 && (num c) < 10) || (c >= 'a' && c <= boundary)
+ 
+-- TODO: Write toDecimal s n function, which will convert the number s
+-- from number with base n to number with base 10
+toDecimal:: String -> Int -> Integer
+toDecimal _ _ = 0
