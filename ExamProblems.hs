@@ -186,3 +186,8 @@ primeNotDiv3LN 17 == [2,4,8,10,14,16]
 
 primeNotDiv3LN :: Int -> [Int]
 primeNotDiv3LN n = [x | x <- [2,2+2..(n-1)], x `mod` 3 /= 0]
+
+
+-- Виводить к-ть простих, додатніх чисел
+primeCnt :: [Int] -> Int
+primeCnt xs = length [t | t <- xs, t > 0, last (dividers t) == 0 ]
