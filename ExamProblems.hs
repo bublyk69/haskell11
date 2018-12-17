@@ -53,7 +53,6 @@ primeNotDiv3LN 17 == [2,4,8,10,14,16]
 primeNotDiv3LN :: Int -> [Int]
 primeNotDiv3LN x = [t | t <- [1..x], t `mod` 3 /= 0, even t]
 
-
 {-
 Список можна розглядати як мультимножину симолів.
 Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
@@ -242,27 +241,8 @@ sumFr xs = foldr (\ x acc  -> acc + x) 0 xs
 factorialFoldl :: Int -> Int
 factorialFoldl x
   | x> 0 = foldl(\ xs acc -> acc*xs) 1 [1..x] 
-<<<<<<< HEAD
   |otherwise = -1
-
-{-
-Реалізувати функцію primeNotDiv3LN :: Int -> [Int], яка генерує елементи зі списку цілих
-парних чисел, які не діляться на 3 та меньші за N.
-Test cases:
-primeNotDiv3LN 0 == []
-primeNotDiv3LN 3 == [2]
-primeNotDiv3LN 4 == [2]
-primeNotDiv3LN 17 == [2,4,8,10,14,16]
-
--}
-
-primeNotDiv3LN :: Int -> [Int]
-primeNotDiv3LN n = [x | x <- [2,2+2..(n-1)], x `mod` 3 /= 0]
-
 
 -- Виводить к-ть простих, додатніх чисел
 primeCnt :: [Int] -> Int
 primeCnt xs = length [t | t <- xs, t > 0, last (dividers t) == 0 ]
-=======
-  |otherwise = -1
->>>>>>> 999b6623f76f4a446684825a6cb619e95c990a51
