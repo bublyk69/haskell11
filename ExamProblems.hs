@@ -89,7 +89,45 @@ generate :: a -> Int -> [a]
 generate x n | n > 0 = x:(generate x (n-1))
              | otherwise = []
 
+{-
+Список можна розглядати як мультимножину симолів.
+Наприклад, "abac" - множина що має два символи 'a' і по одному символу 'b' і 'c'.
+Напишіть функцію bagSubbag st1 st2, котра поветрає True, якщо мультимножина st1 являється підмультимножиною st2.
+X - підмультимножина Y, якщо кожний елемент X зустрічається в Y не меншу кількість раз ніж в X.
+Test cases:
+bagSubbag "" "" == True
+bagSubbag "" "abc" == True
+bagSubbag "abc" "abc" == True
+bagSubbag "abc" "abcd" == True
+bagSubbag "abcc" "abcd" == False
+bagSubbag "abcc" "abccd" == True
+bagSubbag "acc" "abccd" == True
 
+-}
+
+bagSubbag:: String->String->Bool
+bagSubbag [] _ = True
+bagSubbag _ [] = False
+bagSubbag (x:xs) ys 
+ |contains = True && (bagSubbag xs (delElFirst x ys)) 
+ |otherwise = False
+ where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
+
+-- допоміжна функція для bagSubbag
+delElFirst::(Eq a) =>a-> [a] -> [a]
+delElFirst _ [] = []
+delElFirst el (l:list)
+ |el==l = list
+ |otherwise = l:(delElFirst el list)
+
+{- or
+bagSubbag :: String -> String -> Bool
+bagSubbag [] [] = True
+bagSubbag [] _ = True
+bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
+ where a = count x (x:xs) -- count of repeated x in X
+       b = count x ys -- count of repeated x in Y
+-}
 
 -- Відсортувати список чисел за к-ть дільників
 sortDividers :: [Int] -> [Int]
@@ -133,36 +171,6 @@ set (x:xs) = x :( set (delEl x xs))
 
 delEl ::(Eq a) =>a-> [a] -> [a]
 delEl x xs = [t | t <- xs, t /= x]
-
-
--- допоміжна функція для bagIntersect
-delElFirst::(Eq a) =>a-> [a] -> [a]
-delElFirst _ [] = []
-delElFirst el (l:list)
- |el==l = list
- |otherwise = l:(delElFirst el list)
-
-
--- Перевірка, чи являється список підсписком першого
-bagSubbag:: String->String->Bool
-bagSubbag [] _ = True
-bagSubbag _ [] = False
-bagSubbag (x:xs) ys 
- |contains = True && (bagSubbag xs (delElFirst x ys)) 
- |otherwise = False
- where contains = foldl (\acc y->if x==y then acc || True else acc) False ys
-
-{-
-or
-
-bagSubbag :: String -> String -> Bool
-bagSubbag [] [] = True
-bagSubbag [] _ = True
-bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
- where a = count x (x:xs) -- count of repeated x in X
-       b = count x ys -- count of repeated x in Y
-
--}
 
 -- Поєднання списків без дублікатів
 unionL :: [Int] -> [Int] -> [Int]
