@@ -157,6 +157,25 @@ sumFact xs | (not $ check xs) = Nothing
  factorial a | a <= 0 = 1
              | otherwise = a * (factorial (a-1))
 
+{-
+Реалізувати функцію sortDividers::[Int] -> [Int], яка впорядковує список цілих чисел за зростанням
+кількості дільників.
+Test cases:
+sortDividers [36,9,30,7] == [7,9,30,36]
+sortDividers [] == []
+
+-}
+
+sortDividers::[Int] -> [Int]
+sortDividers [] = []
+sortDividers [x] = [x]
+sortDividers (x:xs) = (sortDividers l) ++ m ++ (sortDividers r)
+ where dc n = length $ filter dividor [ d | d <- [2..n]] -- dividers count
+       l = [a | a <- xs, dc a < dc x]
+       m = [a | a <- (x:xs), dc a == dc x]
+       r = [a | a <- xs, dc a > dc x]
+       dividor a = (a `mod` x == 0)
+
 --------------------------------------------------------
 -- IO
 --------------------------------------------------------
@@ -205,10 +224,6 @@ checkBalance xs = helper xs []
 --------------------------------------------------------
 -- Not tested
 --------------------------------------------------------
-
--- Відсортувати список чисел за к-ть дільників
-sortDividers :: [Int] -> [Int]
-sortDividers xs = sortDividers $ map (head) [t | t <- map (dividers) xs]
 
 -- Допоміжна функція, що виводить список списків [число, к-ть дільників]
 dividers :: Int -> [Int]
