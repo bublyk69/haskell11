@@ -1,3 +1,7 @@
+--------------------------------------------------------
+-- Tested
+--------------------------------------------------------
+
 {-
 Напишіть функцію suffix, що знаходить суфікси заданого списку.
 Test cases:
@@ -128,6 +132,56 @@ bagSubbag (x:xs) ys = a <= b && (bagSubbag xs ys)
  where a = count x (x:xs) -- count of repeated x in X
        b = count x ys -- count of repeated x in Y
 -}
+
+
+--------------------------------------------------------
+-- IO
+--------------------------------------------------------
+
+getFileName :: String -> IO String
+getFileName prompt = do
+ putStr prompt
+ getLine
+
+{-
+Перевірити баланс дужок
+Test cases:
+checkBalance "(()())" == True 
+checkBalance "()" == True
+checkBalance "()()()" == True
+checkBalance "((()))" == True
+checkBalance "(2+2)*2-(3-3)" == True
+checkBalance "" == True
+checkBalance "(" == False
+checkBalance "())" == False
+checkBalance ")" == False
+checkBalance ")(" == False
+checkBalance "(asdw((asca)" == False
+checkBalance "(Hello" == False
+
+-}
+balance :: IO()
+balance = do
+ from <- getFileName "From: "
+ s <- readFile from
+ case (checkBalance s) of
+  True -> putStr "Balanced\n"
+  False -> putStr "Unbalanced\n"
+
+checkBalance :: String -> Bool
+checkBalance [] = True
+checkBalance xs = helper xs []
+ where
+ helper "" stack = (length stack) == 0
+ helper (x:xs) stack | x == '(' = helper xs (x:stack) -- push
+                     | x == ')' && (length stack) == 0 = False
+                     | x == ')' = helper xs (tail stack) -- pop
+                     | otherwise = helper xs stack -- ignore
+
+
+--------------------------------------------------------
+-- Not tested
+--------------------------------------------------------
 
 -- Відсортувати список чисел за к-ть дільників
 sortDividers :: [Int] -> [Int]
